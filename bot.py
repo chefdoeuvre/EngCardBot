@@ -19,19 +19,19 @@ bot = telebot.TeleBot(config.token)
 # auto - Enable\disable repeat card every auto_delay sec
 # addmanual [SideA SideB] - Add new card to db
 # addya [Word1, Word2, The Phrase 3] - Add new card with yandex.translate
-# delw [слово на англ] - удалить из базы английское слово со всеми переводами
+# delw [СЃР»РѕРІРѕ РЅР° Р°РЅРіР»] - СѓРґР°Р»РёС‚СЊ РёР· Р±Р°Р·С‹ Р°РЅРіР»РёР№СЃРєРѕРµ СЃР»РѕРІРѕ СЃРѕ РІСЃРµРјРё РїРµСЂРµРІРѕРґР°РјРё
 # yatr [text] - Translate word (en-ru/ru-en)
 # setautodelay - set parameter auto_delay(int)
 
 
-# настройки все записываются в таблицу команда /settings выводит все настройки 
-# добавить сразу текст ?
-# проверка на дурака на всех моментах ввода команд
-# написать хелп где опдробно описать принцип забития базы данных
-# сделай отправку звука через send_voice ogg, проверь на телефоне
+# РЅР°СЃС‚СЂРѕР№РєРё РІСЃРµ Р·Р°РїРёСЃС‹РІР°СЋС‚СЃСЏ РІ С‚Р°Р±Р»РёС†Сѓ РєРѕРјР°РЅРґР° /settings РІС‹РІРѕРґРёС‚ РІСЃРµ РЅР°СЃС‚СЂРѕР№РєРё 
+# РґРѕР±Р°РІРёС‚СЊ СЃСЂР°Р·Сѓ С‚РµРєСЃС‚ ?
+# РїСЂРѕРІРµСЂРєР° РЅР° РґСѓСЂР°РєР° РЅР° РІСЃРµС… РјРѕРјРµРЅС‚Р°С… РІРІРѕРґР° РєРѕРјР°РЅРґ
+# РЅР°РїРёСЃР°С‚СЊ С…РµР»Рї РіРґРµ РѕРїРґСЂРѕР±РЅРѕ РѕРїРёСЃР°С‚СЊ РїСЂРёРЅС†РёРї Р·Р°Р±РёС‚РёСЏ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
+# СЃРґРµР»Р°Р№ РѕС‚РїСЂР°РІРєСѓ Р·РІСѓРєР° С‡РµСЂРµР· send_voice ogg, РїСЂРѕРІРµСЂСЊ РЅР° С‚РµР»РµС„РѕРЅРµ
 
 
-# Настройки
+# РќР°СЃС‚СЂРѕР№РєРё
 
 @bot.message_handler(commands=['setautodelay'])
 def send_test_messages(message):	
@@ -43,35 +43,35 @@ def send_test_messages(message):
     db_worker.close()
     bot.send_message(message.chat.id, '#Settings: set auto_delay to ' + str(new_delay)) 
 
-# обработчик основных команд	
+# РѕР±СЂР°Р±РѕС‚С‡РёРє РѕСЃРЅРѕРІРЅС‹С… РєРѕРјР°РЅРґ	
 @bot.message_handler(commands=['sayit'])
 def send_test_messages(message):
     db_worker = SQLighter(config.database_name)
     db_worker.TableExists(message.chat.id)
     if Utils.count_rows(message.chat.id) == 0:
-       bot.send_message(message.chat.id, 'Нет ни одной карточки')
+       bot.send_message(message.chat.id, 'РќРµС‚ РЅРё РѕРґРЅРѕР№ РєР°СЂС‚РѕС‡РєРё')
        db_worker.close()
        return
     rowid,colid= db_worker.get_last_rowid(message.chat.id)
-    row = db_worker.select_single(rowid,message.chat.id)  # ищем строку исп. последней  
+    row = db_worker.select_single(rowid,message.chat.id)  # РёС‰РµРј СЃС‚СЂРѕРєСѓ РёСЃРї. РїРѕСЃР»РµРґРЅРµР№  
     Utils.GetVoice(row[1])
     voice = open('yasound.ogg', 'rb')
     bot.send_voice(message.chat.id, voice)
-    # Отсоединяемся от БД
+    # РћС‚СЃРѕРµРґРёРЅСЏРµРјСЃСЏ РѕС‚ Р‘Р”
     db_worker.close()
 
 @bot.message_handler(commands=['help'])
 def send_test_messages(message):
-   helptext = ''' Команды:
-/n > Новая или следующая карточка
-/a > правильный ответ
-/h > подсказка
-/auto > автоповторение вкл\выкл
-/addmanual > добавить карточку вручную. [text1 слово1]
-/addya > добавить новые карточки. [text1, слово1, словосочетание1]
-/delw > удалить слово. [text1]
-/yatr > проверить перевод слова
-/setautodelay > установить зачение настроек автоповторения в секундах [integer]
+   helptext = ''' РљРѕРјР°РЅРґС‹:
+/n > РќРѕРІР°СЏ РёР»Рё СЃР»РµРґСѓСЋС‰Р°СЏ РєР°СЂС‚РѕС‡РєР°
+/a > РїСЂР°РІРёР»СЊРЅС‹Р№ РѕС‚РІРµС‚
+/h > РїРѕРґСЃРєР°Р·РєР°
+/auto > Р°РІС‚РѕРїРѕРІС‚РѕСЂРµРЅРёРµ РІРєР»\РІС‹РєР»
+/addmanual > РґРѕР±Р°РІРёС‚СЊ РєР°СЂС‚РѕС‡РєСѓ РІСЂСѓС‡РЅСѓСЋ. [text1 СЃР»РѕРІРѕ1]
+/addya > РґРѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Рµ РєР°СЂС‚РѕС‡РєРё. [text1, СЃР»РѕРІРѕ1, СЃР»РѕРІРѕСЃРѕС‡РµС‚Р°РЅРёРµ1]
+/delw > СѓРґР°Р»РёС‚СЊ СЃР»РѕРІРѕ. [text1]
+/yatr > РїСЂРѕРІРµСЂРёС‚СЊ РїРµСЂРµРІРѕРґ СЃР»РѕРІР°
+/setautodelay > СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р·Р°С‡РµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє Р°РІС‚РѕРїРѕРІС‚РѕСЂРµРЅРёСЏ РІ СЃРµРєСѓРЅРґР°С… [integer]
 '''
    bot.send_message(message.chat.id,helptext)
 
@@ -81,10 +81,10 @@ def send_test_messages(message):
    db_worker.TableExists(message.chat.id)
    sidea = message.text[6:len(message.text)] 
    if len(db_worker.FindSideA(sidea,message.chat.id)) == 0:
-      bot.send_message(message.chat.id, 'Указанной карточки не существует.')
+      bot.send_message(message.chat.id, 'РЈРєР°Р·Р°РЅРЅРѕР№ РєР°СЂС‚РѕС‡РєРё РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.')
    else:
       db_worker.delete_from_DB(sidea.lower(),message.chat.id)
-      bot.send_message(message.chat.id, sidea+' успешно удалено.')
+      bot.send_message(message.chat.id, sidea+' СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅРѕ.')
    db_worker.close()
 										
 @bot.message_handler(commands=['addmanual'])
@@ -95,42 +95,42 @@ def send_test_messages(message):
         sideb = message.text[((message.text.find(' ', 5))+1):len(message.text)]
         db_worker.AddCardstoDB(str(db_worker.getlastid(message.chat.id)+1),sidea.lower(),sideb.lower(),message.chat.id)
         Utils.count_rows(message.chat.id)
-        bot.send_message(message.chat.id, 'Новая карточка ['+sidea+' - '+sideb+'] успешно добавлена. Текущее кол-во карточек: '+str(Utils.count_rows(message.chat.id)))
+        bot.send_message(message.chat.id, 'РќРѕРІР°СЏ РєР°СЂС‚РѕС‡РєР° ['+sidea+' - '+sideb+'] СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅР°. РўРµРєСѓС‰РµРµ РєРѕР»-РІРѕ РєР°СЂС‚РѕС‡РµРє: '+str(Utils.count_rows(message.chat.id)))
         db_worker.close()
 
-@bot.message_handler(commands=['addya']) # слова или фразы через запятую или целый текст
+@bot.message_handler(commands=['addya']) # СЃР»РѕРІР° РёР»Рё С„СЂР°Р·С‹ С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ РёР»Рё С†РµР»С‹Р№ С‚РµРєСЃС‚
 def send_test_messages(message):
         fullt = message.text[7:len(message.text)].split(',') # text1 text2 text3  #sidea = message.text[7:len(message.text)] 
         if len(fullt[0].strip(' ')) < 2:
-           bot.send_message(message.chat.id, 'Неправильный синтаксис команды. /addya [значение]')
+           bot.send_message(message.chat.id, 'РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ СЃРёРЅС‚Р°РєСЃРёСЃ РєРѕРјР°РЅРґС‹. /addya [Р·РЅР°С‡РµРЅРёРµ]')
            return
         db_worker = SQLighter(config.database_name)
         db_worker.TableExists(message.chat.id)        
         for text in fullt:
            sidea = text.strip(' ')
-           side, lang = Utils.yatranslate(sidea) #lang=1 eng, lang=0 ru sidea  какой первый язык
+           side, lang = Utils.yatranslate(sidea) #lang=1 eng, lang=0 ru sidea  РєР°РєРѕР№ РїРµСЂРІС‹Р№ СЏР·С‹Рє
            if lang == 1:
                  sideb = side
            else:
                  sideb = sidea
                  sidea = side
            if sidea == sideb :
-              bot.send_message(message.chat.id, 'Корректный перевод не удался. Возможно ошибка в написании: '+sidea+' <> '+sideb)
-        # здесь проверяем есть ли запись в базе, если нет то добавляем sidea всегда ENG
+              bot.send_message(message.chat.id, 'РљРѕСЂСЂРµРєС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ РЅРµ СѓРґР°Р»СЃСЏ. Р’РѕР·РјРѕР¶РЅРѕ РѕС€РёР±РєР° РІ РЅР°РїРёСЃР°РЅРёРё: '+sidea+' <> '+sideb)
+        # Р·РґРµСЃСЊ РїСЂРѕРІРµСЂСЏРµРј РµСЃС‚СЊ Р»Рё Р·Р°РїРёСЃСЊ РІ Р±Р°Р·Рµ, РµСЃР»Рё РЅРµС‚ С‚Рѕ РґРѕР±Р°РІР»СЏРµРј sidea РІСЃРµРіРґР° ENG
            SideA_in_DB = db_worker.FindSideA(sidea,message.chat.id)
-           if len(SideA_in_DB) == 0: # если не нашел запись в базе
-                db_worker.AddCardstoDB(str(db_worker.getlastid(message.chat.id)+1),sidea.lower(),sideb.lower(),message.chat.id) # создаем новую запись id last+1
+           if len(SideA_in_DB) == 0: # РµСЃР»Рё РЅРµ РЅР°С€РµР» Р·Р°РїРёСЃСЊ РІ Р±Р°Р·Рµ
+                db_worker.AddCardstoDB(str(db_worker.getlastid(message.chat.id)+1),sidea.lower(),sideb.lower(),message.chat.id) # СЃРѕР·РґР°РµРј РЅРѕРІСѓСЋ Р·Р°РїРёСЃСЊ id last+1
                 Utils.count_rows(message.chat.id)
-                bot.send_message(message.chat.id, 'Новая карточка ['+sidea+' - '+sideb+'] успешно добавлена. Текущее кол-во карточек: '+str(Utils.count_rows(message.chat.id)))
+                bot.send_message(message.chat.id, 'РќРѕРІР°СЏ РєР°СЂС‚РѕС‡РєР° ['+sidea+' - '+sideb+'] СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅР°. РўРµРєСѓС‰РµРµ РєРѕР»-РІРѕ РєР°СЂС‚РѕС‡РµРє: '+str(Utils.count_rows(message.chat.id)))
            else:
-                # если нашел то добавить перевод в уже существующую (если еще нет такого перевода!!!!)
+                # РµСЃР»Рё РЅР°С€РµР» С‚Рѕ РґРѕР±Р°РІРёС‚СЊ РїРµСЂРµРІРѕРґ РІ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰СѓСЋ (РµСЃР»Рё РµС‰Рµ РЅРµС‚ С‚Р°РєРѕРіРѕ РїРµСЂРµРІРѕРґР°!!!!)
                 SideA_in_DB = SideA_in_DB[0]
                 if Utils.FindSideB(sideb,SideA_in_DB[2]) == 1:
-                   bot.send_message(message.chat.id, 'Карточка ['+sidea+' - '+SideA_in_DB[2]+ '] уже существует')   
+                   bot.send_message(message.chat.id, 'РљР°СЂС‚РѕС‡РєР° ['+sidea+' - '+SideA_in_DB[2]+ '] СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚')   
                 else:    
                    db_worker.UpdateSideB(SideA_in_DB[0],(SideA_in_DB[2]+'; '+sideb.lower()),message.chat.id)
                    Utils.count_rows(message.chat.id)
-                   bot.send_message(message.chat.id, 'Карточка ['+sidea+' - '+SideA_in_DB[2]+'; '+sideb+'] успешно обновлена. Текущее кол-во карточек: '+str(Utils.count_rows(message.chat.id)))
+                   bot.send_message(message.chat.id, 'РљР°СЂС‚РѕС‡РєР° ['+sidea+' - '+SideA_in_DB[2]+'; '+sideb+'] СѓСЃРїРµС€РЅРѕ РѕР±РЅРѕРІР»РµРЅР°. РўРµРєСѓС‰РµРµ РєРѕР»-РІРѕ РєР°СЂС‚РѕС‡РµРє: '+str(Utils.count_rows(message.chat.id)))
         db_worker.close()
 
 @bot.message_handler(commands=['yatr'])
@@ -146,13 +146,13 @@ def send_test_messages(message):
     db_worker.TableExists(message.chat.id)
     auto_delay, auto_starttime, auto_endtime, auto_enabled = db_worker.LoadSettings(message.chat.id)
     if Utils.count_rows(message.chat.id) == 0:
-       bot.send_message(message.chat.id, 'Нет ни одной карточки')
+       bot.send_message(message.chat.id, 'РќРµС‚ РЅРё РѕРґРЅРѕР№ РєР°СЂС‚РѕС‡РєРё')
        db_worker.close()
        return
     rowid,colid = db_worker.get_last_rowid(message.chat.id)
-    row = db_worker.select_single(rowid,message.chat.id)  # ищем строку исп. последней   
-    bot.send_message(message.chat.id, 'Правильный ответ: '+row[Utils.reverse(colid)])
-    # Отсоединяемся от БД
+    row = db_worker.select_single(rowid,message.chat.id)  # РёС‰РµРј СЃС‚СЂРѕРєСѓ РёСЃРї. РїРѕСЃР»РµРґРЅРµР№   
+    bot.send_message(message.chat.id, 'РџСЂР°РІРёР»СЊРЅС‹Р№ РѕС‚РІРµС‚: '+row[Utils.reverse(colid)])
+    # РћС‚СЃРѕРµРґРёРЅСЏРµРјСЃСЏ РѕС‚ Р‘Р”
     db_worker.close()
     if (auto_enabled == '0'):
        checkcard(message)
@@ -162,40 +162,40 @@ def send_test_messages(message):
     db_worker = SQLighter(config.database_name)
     db_worker.TableExists(message.chat.id)
     if Utils.count_rows(message.chat.id) == 0:
-       bot.send_message(message.chat.id, 'Нет ни одной карточки')
+       bot.send_message(message.chat.id, 'РќРµС‚ РЅРё РѕРґРЅРѕР№ РєР°СЂС‚РѕС‡РєРё')
        db_worker.close()
        return
     rowid,colid= db_worker.get_last_rowid(message.chat.id)
-    row = db_worker.select_single(rowid,message.chat.id)  # ищем строку исп. последней    
+    row = db_worker.select_single(rowid,message.chat.id)  # РёС‰РµРј СЃС‚СЂРѕРєСѓ РёСЃРї. РїРѕСЃР»РµРґРЅРµР№    
     help_answer = row[Utils.reverse(colid)]
     for a in help_answer:
        if random.randint(1,2) == 1:
           help_answer = help_answer.replace(a,'.')
-    bot.send_message(message.chat.id, 'Подсказка: '+ help_answer)
-    # Отсоединяемся от БД
+    bot.send_message(message.chat.id, 'РџРѕРґСЃРєР°Р·РєР°: '+ help_answer)
+    # РћС‚СЃРѕРµРґРёРЅСЏРµРјСЃСЏ РѕС‚ Р‘Р”
     db_worker.close()
 
 
 @bot.message_handler(commands=['n'])
 def checkcard(message):
-    # Подключаемся к БД
+    # РџРѕРґРєР»СЋС‡Р°РµРјСЃСЏ Рє Р‘Р”
     db_worker = SQLighter(config.database_name)
     db_worker.TableExists(message.chat.id)
-    # Получаем случайную строку из БД
+    # РџРѕР»СѓС‡Р°РµРј СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃС‚СЂРѕРєСѓ РёР· Р‘Р”
     if Utils.count_rows(message.chat.id) == 0:
-       bot.send_message(message.chat.id, 'Нет ни одной карточки')
+       bot.send_message(message.chat.id, 'РќРµС‚ РЅРё РѕРґРЅРѕР№ РєР°СЂС‚РѕС‡РєРё')
        db_worker.close()
        return
-    colid = random.randint(1,2) # выбираем случайный столбец англ\рус (поставить тут условие в настройках)       
-    row = db_worker.select_random(message.chat.id) # присваеваем переменной случайную строку из БД
-    #Utils.setrID(row[0],rrow) # запиываем какую строку и сторону использовали
-    db_worker.set_last_rowid(message.chat.id, row[0],colid) # записываем в базу id строки и колонку
-    if colid == 2: #Если столбец второй, с русским переводом то берем одно из значений
-        sideb_list = row[colid].split(';') # разбили строку по ; в лист
+    colid = random.randint(1,2) # РІС‹Р±РёСЂР°РµРј СЃР»СѓС‡Р°Р№РЅС‹Р№ СЃС‚РѕР»Р±РµС† Р°РЅРіР»\СЂСѓСЃ (РїРѕСЃС‚Р°РІРёС‚СЊ С‚СѓС‚ СѓСЃР»РѕРІРёРµ РІ РЅР°СЃС‚СЂРѕР№РєР°С…)       
+    row = db_worker.select_random(message.chat.id) # РїСЂРёСЃРІР°РµРІР°РµРј РїРµСЂРµРјРµРЅРЅРѕР№ СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃС‚СЂРѕРєСѓ РёР· Р‘Р”
+    #Utils.setrID(row[0],rrow) # Р·Р°РїРёС‹РІР°РµРј РєР°РєСѓСЋ СЃС‚СЂРѕРєСѓ Рё СЃС‚РѕСЂРѕРЅСѓ РёСЃРїРѕР»СЊР·РѕРІР°Р»Рё
+    db_worker.set_last_rowid(message.chat.id, row[0],colid) # Р·Р°РїРёСЃС‹РІР°РµРј РІ Р±Р°Р·Сѓ id СЃС‚СЂРѕРєРё Рё РєРѕР»РѕРЅРєСѓ
+    if colid == 2: #Р•СЃР»Рё СЃС‚РѕР»Р±РµС† РІС‚РѕСЂРѕР№, СЃ СЂСѓСЃСЃРєРёРј РїРµСЂРµРІРѕРґРѕРј С‚Рѕ Р±РµСЂРµРј РѕРґРЅРѕ РёР· Р·РЅР°С‡РµРЅРёР№
+        sideb_list = row[colid].split(';') # СЂР°Р·Р±РёР»Рё СЃС‚СЂРѕРєСѓ РїРѕ ; РІ Р»РёСЃС‚
         bot.send_message(message.chat.id, '# '+sideb_list[random.randint(1,len(sideb_list))-1])
     else: 
-        bot.send_message(message.chat.id, '# '+row[colid]) # отправляем sidea целиком
-    # Отсоединяемся от БД
+        bot.send_message(message.chat.id, '# '+row[colid]) # РѕС‚РїСЂР°РІР»СЏРµРј sidea С†РµР»РёРєРѕРј
+    # РћС‚СЃРѕРµРґРёРЅСЏРµРјСЃСЏ РѕС‚ Р‘Р”
     db_worker.close()
 
 @bot.message_handler(commands=['auto'])
@@ -206,7 +206,7 @@ def send_test_messages(message):
     auto_delay, auto_starttime, auto_endtime, auto_enabled = db_worker.LoadSettings(message.chat.id)
     print
     if str(auto_enabled) == '0':
-       bot.send_message(message.chat.id, 'Автоповторение запущено (каждые '+str(auto_delay)+' сек с '+str(auto_starttime)+' часов до '+ str(auto_endtime)+' часов)')
+       bot.send_message(message.chat.id, 'РђРІС‚РѕРїРѕРІС‚РѕСЂРµРЅРёРµ Р·Р°РїСѓС‰РµРЅРѕ (РєР°Р¶РґС‹Рµ '+str(auto_delay)+' СЃРµРє СЃ '+str(auto_starttime)+' С‡Р°СЃРѕРІ РґРѕ '+ str(auto_endtime)+' С‡Р°СЃРѕРІ)')
        db_worker.SaveSettings(message.chat.id,auto_delay,auto_starttime, auto_endtime, 1)
        go(message,1)
     #   threads.append([])
@@ -215,7 +215,7 @@ def send_test_messages(message):
     #   threads[len(threads)-1].append(t)
     #   t.start() 
     elif str(auto_enabled) == '1':
-       bot.send_message(message.chat.id, 'Автоповторение отключено')
+       bot.send_message(message.chat.id, 'РђРІС‚РѕРїРѕРІС‚РѕСЂРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
        db_worker.SaveSettings(message.chat.id,auto_delay,auto_starttime, auto_endtime, 0)
        go(message,0)
     #   for thr in threads:
@@ -224,36 +224,36 @@ def send_test_messages(message):
     #          thr.remove
     db_worker.close()
 
-# тут будем проверять ответ, когда пишешь любой текст кроме команды. Работает при чате 1 на 1 или force_reply в группе
+# С‚СѓС‚ Р±СѓРґРµРј РїСЂРѕРІРµСЂСЏС‚СЊ РѕС‚РІРµС‚, РєРѕРіРґР° РїРёС€РµС€СЊ Р»СЋР±РѕР№ С‚РµРєСЃС‚ РєСЂРѕРјРµ РєРѕРјР°РЅРґС‹. Р Р°Р±РѕС‚Р°РµС‚ РїСЂРё С‡Р°С‚Рµ 1 РЅР° 1 РёР»Рё force_reply РІ РіСЂСѓРїРїРµ
 @bot.message_handler(content_types=["text"])
 def checkanswer(message): 
-  # Подключаемся к БД
+  # РџРѕРґРєР»СЋС‡Р°РµРјСЃСЏ Рє Р‘Р”
     Right = 0
     db_worker = SQLighter(config.database_name)
     db_worker.TableExists(message.chat.id)
     auto_delay, auto_starttime, auto_endtime, auto_enabled = db_worker.LoadSettings(message.chat.id)
     if Utils.count_rows(message.chat.id) == 0:
-       bot.send_message(message.chat.id, 'Нет ни одной карточки')
+       bot.send_message(message.chat.id, 'РќРµС‚ РЅРё РѕРґРЅРѕР№ РєР°СЂС‚РѕС‡РєРё')
        db_worker.close()
        return
     rowid,colid= db_worker.get_last_rowid(message.chat.id)
-    row = db_worker.select_single(rowid,message.chat.id)  # ищем строку исп. последней
-    # смотрим какую сторону карточки проверяем
-    if colid == 2: # если сторону B то надо проверять все вхождения
+    row = db_worker.select_single(rowid,message.chat.id)  # РёС‰РµРј СЃС‚СЂРѕРєСѓ РёСЃРї. РїРѕСЃР»РµРґРЅРµР№
+    # СЃРјРѕС‚СЂРёРј РєР°РєСѓСЋ СЃС‚РѕСЂРѕРЅСѓ РєР°СЂС‚РѕС‡РєРё РїСЂРѕРІРµСЂСЏРµРј
+    if colid == 2: # РµСЃР»Рё СЃС‚РѕСЂРѕРЅСѓ B С‚Рѕ РЅР°РґРѕ РїСЂРѕРІРµСЂСЏС‚СЊ РІСЃРµ РІС…РѕР¶РґРµРЅРёСЏ
        for answ in row[colid].split(';'):
           if message.text.upper() == answ.upper().strip(' '):
-              Right = 1 #ответили правильно
+              Right = 1 #РѕС‚РІРµС‚РёР»Рё РїСЂР°РІРёР»СЊРЅРѕ
     else:
-       if message.text.upper() == row[colid].upper(): # проверяем ответ
+       if message.text.upper() == row[colid].upper(): # РїСЂРѕРІРµСЂСЏРµРј РѕС‚РІРµС‚
           Right = 1
-    # Отсоединяемся от БД
+    # РћС‚СЃРѕРµРґРёРЅСЏРµРјСЃСЏ РѕС‚ Р‘Р”
     db_worker.close()
     if Right == 1:
-       bot.send_message(message.chat.id, 'Правильно!')
+       bot.send_message(message.chat.id, 'РџСЂР°РІРёР»СЊРЅРѕ!')
        if (auto_enabled == '0'):
           checkcard(message)
     else:
-       bot.send_message(message.chat.id, 'Неправильно!')
+       bot.send_message(message.chat.id, 'РќРµРїСЂР°РІРёР»СЊРЅРѕ!')
 
 def go(message, enable):
     db_worker = SQLighter(config.database_name)
@@ -261,7 +261,7 @@ def go(message, enable):
     auto_delay, auto_starttime, auto_endtime, auto_enabled = db_worker.LoadSettings(message.chat.id)
     db_worker.close() 
     if (str(auto_enabled) == '1') and (datetime.now().hour > auto_starttime) and (datetime.now().hour < auto_endtime) : # try if thread isnot alive and /auto is ON 
-        checkcard(message) # запускаем ф-ю /n с последним message (оттуда берем message.chat.id)
+        checkcard(message) # Р·Р°РїСѓСЃРєР°РµРј С„-СЋ /n СЃ РїРѕСЃР»РµРґРЅРёРј message (РѕС‚С‚СѓРґР° Р±РµСЂРµРј message.chat.id)
     if enable == 1:
        threading.Timer(auto_delay, lambda: go(message,1)).start()
 
